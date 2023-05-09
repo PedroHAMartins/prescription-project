@@ -6,14 +6,14 @@ const RegisterPage = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [usersList, setUsersList] = useState([]);
+    // const [usersList, setUsersList] = useState([]);
 
-    useEffect(() => {
-        Axios.get('http://localhost:3001/api/users')
-            .then((response) => {
-                setUsersList(response.data);
-            })
-    }, []);
+    // useEffect(() => {
+    //     Axios.get('http://localhost:3001/api/users')
+    //         .then((response) => {
+    //             setUsersList(response.data);
+    //         })
+    // }, []);
 
     const registerUser = () => {
         Axios.post('http://localhost:3001/api/register', {
@@ -36,15 +36,7 @@ const RegisterPage = () => {
                 }}/>
                 <button onClick={registerUser}>Register</button>
             </div>
-
-            {usersList.map((user) => {
-                return (
-                    <div>
-                        <p>Username</p><p>{user.username}</p>
-                        <p>Password</p><p>{user.password}</p>
-                    </div>
-                )
-            })}
+            <p>Already have an account? <a href="/">Login!</a></p>
         </section>
     )
 
