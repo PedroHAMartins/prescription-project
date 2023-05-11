@@ -1,5 +1,5 @@
 import '../../../style/components/auth/_registerpage.sass';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Axios from 'axios';
 
 const RegisterPage = () => {
@@ -21,6 +21,10 @@ const RegisterPage = () => {
             password: password
         }).then(() => {
             alert('Successfully registered!');
+        }).catch((error) => {
+            if(error.response.status === 409) {
+                alert('User already exists');
+            }
         })
     }
     

@@ -1,22 +1,31 @@
 import '../../../style/components/auth/_loginpage.sass';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 const LoginPage = () => {
-    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const loginUser = () => {
+
         Axios.post('http://localhost:3001/api/login', {
             username: username,
             password: password
-        }).then(() => {
+        }).then((response) => {      
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            setLoggedIn(true);      
             alert('Successfully logged in!');
         }).catch((error) => {
             alert('Incorrect username or password');
             console.log(error);
         })
+    }
+
+    if(loggedIn) {
+        return <Navigate to='/main' />
     }
 
     return (
