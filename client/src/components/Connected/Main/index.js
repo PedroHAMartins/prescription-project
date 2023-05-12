@@ -1,4 +1,3 @@
-import { Link, Navigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import NavBar from './Nav';
@@ -27,32 +26,9 @@ const MainPage = () => {
             })
     }
 
-
-    // const logout = () => {
-    //     localStorage.removeItem('token');
-    // }
-
-    if(!localStorage.getItem('token')) {
-        return <Navigate to='/' />
-    }
-
     return (
         <div>
-                {userInfo ? (
-                    <div>
-                        <NavBar />
-                        {/* <ul>
-                            <li>Username: {userInfo.username}</li>
-                            <li>ID: {userInfo.id_user}</li>
-                            <li>Password: {userInfo.password}</li>
-                        </ul> */}
-                    </div>
-                ): (
-                    <p>You are not logged in</p>
-                )}
-            {/* <Link to='/'>
-                <button onClick={logout}>Logout</button>
-            </Link> */}
+            <NavBar />
         </div>
     )
 }

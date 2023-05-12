@@ -9,7 +9,7 @@ const NavBar = () => {
     }
 
     if(!localStorage.getItem('token')) {
-        return <Navigate to='/' />
+        return <Navigate to='/login' />
     }
 
     return (
@@ -18,7 +18,7 @@ const NavBar = () => {
                 <li><CgProfile /></li>
                 <li><CgCalendar /></li>
                 <li><CgDatabase /></li>
-                <li><Link to='/' onClick={logout}><CgLogOut/></Link></li>             
+                <li><Link to='/login' onClick={logout}><CgLogOut/></Link></li>             
             </ul>
         </nav>
     )
