@@ -55,6 +55,34 @@ app.post('/api/register',  async(req, res) => {
     })
 })
 
+app.post('/api/client/register',  async(req, res) => {
+    const name = req.body.name;
+
+    const token = req.headers.authorization;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.id_user;
+
+    const sqlSelect = `SELECT * FROM client WHERE name = ?`;
+
+    db.query(sqlSelect, [name], async (err, result) => {
+        if(err){
+            return res.status(500).json({ error: 'Error while fetching client' });
+        }
+
+        if(result.length > 0) {
+            return res.status(409).json({ error: 'Client already registered' });
+        }
+
+        const sqlInsert = `INSERT INTO client (name, id_user_fk) VALUES (?, ?)`;
+        db.query(sqlInsert, [name, userId], (err, result) => {
+            if(err){
+                return res.status(500).json({ error: 'Error while inserting client' });
+            }
+            res.status(200).json({message: 'Client successfully registered'});
+        })
+    })
+})
+
 app.post('/api/login', async(req, res) => {
     const { username, password } = req.body;
     const sqlSelect = `SELECT * FROM user WHERE username = ?`;

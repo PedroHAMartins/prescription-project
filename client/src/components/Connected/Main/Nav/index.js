@@ -3,9 +3,13 @@ import React from 'react';
 import { CgCalendar, CgDatabase, CgLogOut, CgProfile } from 'react-icons/cg';
 import { Link, Navigate } from 'react-router-dom';
 
-const NavBar = () => {
+const NavBar = ( { changeComponent }) => {
     const logout = () => {
         localStorage.removeItem('token');
+    };
+
+    const handleOptionClick = (component) => {
+        changeComponent(component);
     }
 
     if(!localStorage.getItem('token')) {
@@ -15,10 +19,18 @@ const NavBar = () => {
     return (
         <nav>
             <ul>
-                <li><CgProfile /></li>
-                <li><CgCalendar /></li>
-                <li><CgDatabase /></li>
-                <li><Link to='/login' onClick={logout}><CgLogOut/></Link></li>             
+                <li>
+                    <CgProfile onClick={() => handleOptionClick('profile')}/>
+                </li>
+                <li>
+                    <CgCalendar onClick={() => handleOptionClick('dashboard')}/>
+                </li>
+                <li>
+                    <CgDatabase onClick={() => handleOptionClick('database')}/>
+                </li>
+                <li>
+                    <Link to='/login' onClick={logout}><CgLogOut/></Link>
+                </li>             
             </ul>
         </nav>
     )
