@@ -1,4 +1,4 @@
-import '../../../../style/components/connected/main/nav.sass';
+import '../../../../style/components/connected/main/_nav.sass';
 import React from 'react';
 import { CgCalendar, CgDatabase, CgLogOut, CgProfile } from 'react-icons/cg';
 import { Link, Navigate } from 'react-router-dom';

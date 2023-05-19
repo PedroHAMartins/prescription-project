@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import NavBar from './Nav';
-import '../../../style/components/connected/main/main.sass'
+import '../../../style/components/connected/main/_main.sass'
 import Dashboard from './Nav/Dashboard';
 import Profile from './Nav/Profile';
 import Database from './Nav/Database';

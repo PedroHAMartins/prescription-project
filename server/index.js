@@ -57,6 +57,7 @@ app.post('/api/register',  async(req, res) => {
 
 app.post('/api/client/register',  async(req, res) => {
     const name = req.body.name;
+    const gender = req.body.gender;
 
     const token = req.headers.authorization;
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -73,8 +74,8 @@ app.post('/api/client/register',  async(req, res) => {
             return res.status(409).json({ error: 'Client already registered' });
         }
 
-        const sqlInsert = `INSERT INTO client (name, id_user_fk) VALUES (?, ?)`;
-        db.query(sqlInsert, [name, userId], (err, result) => {
+        const sqlInsert = `INSERT INTO client (name, gender, id_user_fk) VALUES (?, ?, ?)`;
+        db.query(sqlInsert, [name, gender, userId], (err, result) => {
             if(err){
                 return res.status(500).json({ error: 'Error while inserting client' });
             }
@@ -131,6 +132,25 @@ app.get('/api/user', verifyAuth, (req, res) => {
         };
         
         res.status(200).json(user_info);
+    })
+})
+
+app.get('/api/client/search', verifyAuth, (req, res) => {
+    const {query} = req.query;
+    const userId = req.id_user;
+
+    const sqlSelect = `SELECT * FROM client WHERE name LIKE ? AND id_user_fk = ?`;
+
+    db.query(sqlSelect, [`%${query}%`, userId], (err, result) => {
+        if(err) {
+            return res.status(500).json({ error: 'Error while fetching client' });
+        }
+
+        if(result.length === 0) {
+            return res.status(404).json({ error: 'No clients found' });
+        }
+
+        res.status(200).json(result);
     })
 })
 
