@@ -59,6 +59,10 @@ app.post('/api/client/register',  async(req, res) => {
     const name = req.body.name;
     const gender = req.body.gender;
 
+    if(!name || !gender) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
     const token = req.headers.authorization;
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const userId = decoded.id_user;
@@ -153,6 +157,58 @@ app.get('/api/client/search', verifyAuth, (req, res) => {
         res.status(200).json(result);
     })
 })
+
+app.post('/api/exercise/register',  async(req, res) => {
+    const name = req.body.name;
+    const type = req.body.type;
+
+    if(!name || !type) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const token = req.headers.authorization;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.id_user;
+
+    const sqlSelect = `SELECT * FROM exercises WHERE name = ?`;
+
+    db.query(sqlSelect, [name], async (err, result) => {
+        if(err){
+            return res.status(500).json({ error: 'Error while fetching exercise' });
+        }
+
+        if(result.length > 0) {
+            return res.status(409).json({ error: 'Exercise already registered' });
+        }
+
+        const sqlInsert = `INSERT INTO exercises (name, type, id_user_fk) VALUES (?, ?, ?)`;
+        db.query(sqlInsert, [name, type, userId], (err, result) => {
+            if(err){
+                return res.status(500).json({ error: 'Error while inserting exercise' });
+            }
+            res.status(200).json({message: 'Exercise successfully registered'});
+        })
+    })
+})
+
+app.get('/api/exercise/list', verifyAuth, (req, res) => {
+    const token = req.headers.authorization;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.id_user;
+
+    const sqlSelect = `SELECT * FROM exercises WHERE id_user_fk = ?`;
+    db.query(sqlSelect, [userId], (err, result) => {
+        if(err) {
+            return res.status(500).json({ error: 'Error while fetching exercise' });
+        }
+        if(result.length === 0) {
+            return res.status(404).json({ error: 'No exercises found' });
+        }
+        res.status(200).json(result);
+    })
+
+})
+
 
 app.listen(3001, () => {
     console.log('Server is running on port 3001');

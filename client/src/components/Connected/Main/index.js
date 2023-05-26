@@ -5,6 +5,8 @@ import '../../../style/components/connected/main/_main.sass'
 import Dashboard from './Nav/Dashboard';
 import Profile from './Nav/Profile';
 import Database from './Nav/Database';
+import ClientPage from './Nav/Database/ClientPage';
+import DatabaseExercises from './Nav/DatabaseExercises';
 
 const MainPage = () => {
     // const [userInfo, setUserInfo] = useState(null);
@@ -31,6 +33,7 @@ const MainPage = () => {
     // }
 
     const [selectedComponent, setSelectedComponent] = useState('dashboard');
+    const [selectedClient, setSelectedClient] = useState(null);
 
     const renderComponent = () => {
         switch (selectedComponent) {
@@ -39,7 +42,11 @@ const MainPage = () => {
         case 'profile':
                 return <Profile />
         case 'database':
-                return <Database />
+                return (<Database selectedClient={selectedClient} setSelectedClient={setSelectedClient} />)
+        case 'client':
+                return <ClientPage client={selectedClient} />
+        case 'database_exercises':
+                return <DatabaseExercises />
         default:
             return <Dashboard />
         }
@@ -47,12 +54,17 @@ const MainPage = () => {
 
     const changeComponent = (component) => {
         setSelectedComponent(component);
+        setSelectedClient(null);
     }
 
     return (
         <main>
             <NavBar changeComponent={changeComponent}/>
-            {renderComponent()}
+            {selectedClient ? (
+                <ClientPage client={selectedClient} />
+            ) : (
+                renderComponent()
+            )}
         </main>
     )
 }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
+import ClientRow from './ClientRow';
 import '../../../../../style/components/connected/main/options/_database.sass'
 
-const Database = () => {
+const Database = ( {selectedClient, setSelectedClient}) => {
     const [clientName, setClientName] = useState('');
     const [gender, setGender] = useState('');
 
@@ -24,10 +25,14 @@ const Database = () => {
         }, config ).then(() => {
             alert('Successfully registered client!');
             setClientName('');
+            setGender('');           
             searchClient();
         }).catch((error) => {
             if(error.response.status === 409) {
                 alert('Client already exists');
+            }
+            if(error.response.status === 400) {
+                alert('All fields are required');
             }
         })
     }
@@ -62,56 +67,56 @@ const Database = () => {
         return () => clearTimeout(delay);
     })
 
-
-
     return (
-        <section>
-            <div>
+        <section className='section__database__clients'>
+            <div className='div__database__clients__insert'>
+                <h2>Register Client</h2>
                 <input  type="text" 
                         name="" 
                         id="" 
                         placeholder="Client name" 
+                        value={clientName}
                         onChange={(event) => setClientName(event.target.value)}/>
-                <div>
-                    <input  type="radio" 
-                            name="gender" 
-                            id="male" 
-                            value="Male" 
-                            checked={gender === 'Male'} 
-                            onChange={(event) => setGender(event.target.value)}/>
-                    <label htmlFor="male">Male</label>
-                </div>
+                <div className='div__insert__radio'>
+                    <div>
+                        <input  type="radio" 
+                                name="gender" 
+                                id="" 
+                                value="Male" 
+                                checked={gender === 'Male'} 
+                                onChange={(event) => setGender(event.target.value)}/>
+                        <label htmlFor="male">Male</label>
+                    </div>
 
-                <div>
-                    <input  type="radio" 
-                            name="gender" 
-                            id="female" 
-                            value="Female" 
-                            checked={gender === 'Female'} 
-                            onChange={(event) => setGender(event.target.value)}/>
-                    <label htmlFor="female">Female</label>
+                    <div>
+                        <input  type="radio" 
+                                name="gender" 
+                                id="" 
+                                value="Female" 
+                                checked={gender === 'Female'} 
+                                onChange={(event) => setGender(event.target.value)}/>
+                        <label htmlFor="female">Female</label>
+                    </div>
                 </div>
 
                 <button onClick={insertClient}>Register</button>
             </div>
-            <div>
+            <div className='div__list'>
                 <h2>Clients list</h2>
                 <input type="text" name="" id="" placeholder='Search by name' value={searchQuery} onChange={handleSearchInputChange}/>
                 <table>
                     <thead>
                         <tr>
-                            <th>Client name</th>
+                            <th>Clients</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {clientList.map((client) => {
-                            return (
-                                <tr key={client.id_client}>
-                                    <td>{client.name}</td>
-                                    <td>{client.gender}</td>
-                                </tr>
-                            )
-                        })}
+                        {clientList.map((client) => (
+                            <ClientRow 
+                                key={client.id_client} 
+                                client={client} 
+                                setSelectedClient={setSelectedClient}/>
+                        ))}
                     </tbody>
                 </table>              
             </div>
