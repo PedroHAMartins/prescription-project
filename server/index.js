@@ -83,6 +83,32 @@ app.post('/api/client/register',  async(req, res) => {
             if(err){
                 return res.status(500).json({ error: 'Error while inserting client' });
             }
+            const clientId = result.insertId;
+
+            const sqlInsertFirstEvaluation = `INSERT INTO first_evaluation (id_client_fk) VALUES (?)`;
+            const sqlInsertSecondEvaluation = `INSERT INTO second_evaluation (id_client_fk) VALUES (?)`;
+            const sqlInsertPrescription = `INSERT INTO prescription (id_client_fk) VALUES (?)`;
+
+            db.query(sqlInsertFirstEvaluation, [clientId], (err, result) => {
+                if(err){
+                    console.log('Error while inserting first evaluation:', err);
+                }
+                console.log('Inserted first evaluation', result);
+            });
+
+            db.query(sqlInsertSecondEvaluation, [clientId], (err, result) => {
+                if(err){
+                    console.log('Error while inserting second evaluation:', err);
+                }
+                console.log('Inserted second evaluation', result);
+            });
+
+            db.query(sqlInsertPrescription, [clientId], (err, result) => {
+                if(err){
+                    console.log('Error while inserting prescription:', err);
+                }
+                console.log('Inserted prescription', result);
+            });
             res.status(200).json({message: 'Client successfully registered'});
         })
     })

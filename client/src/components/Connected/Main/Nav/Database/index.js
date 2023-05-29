@@ -2,21 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import ClientRow from './ClientRow';
 import '../../../../../style/components/connected/main/options/_database.sass'
+import { token, config } from '../../../../../utils/getToken';
 
-const Database = ( {selectedClient, setSelectedClient}) => {
+const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
     const [clientName, setClientName] = useState('');
     const [gender, setGender] = useState('');
 
 
     const [clientList, setClientList] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const token = localStorage.getItem('token');
-    const config = {
-        headers: {
-            Authorization: token
-        }
-    };
 
     const insertClient = () => {
         Axios.post('http://localhost:3001/api/client/register', {
@@ -115,7 +109,9 @@ const Database = ( {selectedClient, setSelectedClient}) => {
                             <ClientRow 
                                 key={client.id_client} 
                                 client={client} 
-                                setSelectedClient={setSelectedClient}/>
+                                setSelectedClient={setSelectedClient}
+                                changeComponent={changeComponent}
+                                />
                         ))}
                     </tbody>
                 </table>              

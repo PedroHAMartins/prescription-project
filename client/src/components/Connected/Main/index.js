@@ -1,70 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
+import React, { useState } from 'react';
 import NavBar from './Nav';
 import '../../../style/components/connected/main/_main.sass'
 import Dashboard from './Nav/Dashboard';
 import Profile from './Nav/Profile';
 import Database from './Nav/Database';
-import ClientPage from './Nav/Database/ClientPage';
 import DatabaseExercises from './Nav/DatabaseExercises';
+import FirstEvaluation from './Nav/Database/ClientPage/FirstEvaluation';
+import SecondEvaluation from './Nav/Database/ClientPage/SecondEvaluation';
+import Prescription from './Nav/Database/ClientPage/Prescription';
 
 const MainPage = () => {
-    // const [userInfo, setUserInfo] = useState(null);
-
-    // useEffect(() => {
-    //     getInfo();
-    // }, []);
-
-    // const getInfo = () => {
-    //     const token = localStorage.getItem('token');
-    //     const config = {
-    //         headers: {
-    //             Authorization: token
-    //         }
-    //     };
-
-    //     Axios.get('http://localhost:3001/api/user', config)
-    //         .then((response) => {
-    //             setUserInfo(response.data);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         })
-    // }
-
     const [selectedComponent, setSelectedComponent] = useState('dashboard');
     const [selectedClient, setSelectedClient] = useState(null);
 
+    const changeComponent = (component, client) => {
+        setSelectedComponent(component);
+        setSelectedClient(client);
+    }
+
+    const NoClientSelected = () => {
+        return (
+            <div>
+                <p>No client selected</p>
+            </div>
+        )
+    }
+
     const renderComponent = () => {
+
         switch (selectedComponent) {
             case 'dashboard':
                 return <Dashboard />
-        case 'profile':
+            case 'profile':
                 return <Profile />
-        case 'database':
-                return (<Database selectedClient={selectedClient} setSelectedClient={setSelectedClient} />)
-        case 'client':
-                return <ClientPage client={selectedClient} />
-        case 'database_exercises':
+            case 'database':
+                return (<Database 
+                        selectedClient={selectedClient} 
+                        setSelectedClient={setSelectedClient} 
+                        changeComponent={changeComponent}
+                        />)
+            case 'database_exercises':
                 return <DatabaseExercises />
-        default:
-            return <Dashboard />
+            case 'first_evaluation':
+                return (
+                    selectedClient ? (
+                        <FirstEvaluation client={selectedClient} />
+                    ) : (
+                        <NoClientSelected />
+                    )
+                );
+            case 'second_evaluation':
+                return (
+                    selectedClient ? (
+                        <SecondEvaluation client={selectedClient} />
+                    ) : (
+                        <NoClientSelected />
+                    )
+                );
+            case 'prescription':
+                return (
+                    selectedClient ? (
+                        <Prescription client={selectedClient} />
+                    ) : (
+                        <NoClientSelected />
+                    )
+                )
+            default:
+                return <Dashboard />
         }
     };
-
-    const changeComponent = (component) => {
-        setSelectedComponent(component);
-        setSelectedClient(null);
-    }
 
     return (
         <main>
             <NavBar changeComponent={changeComponent}/>
-            {selectedClient ? (
-                <ClientPage client={selectedClient} />
-            ) : (
-                renderComponent()
-            )}
+            {renderComponent()}
         </main>
     )
 }

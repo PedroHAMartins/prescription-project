@@ -6,14 +6,6 @@ const RegisterPage = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    // const [usersList, setUsersList] = useState([]);
-
-    // useEffect(() => {
-    //     Axios.get('http://localhost:3001/api/users')
-    //         .then((response) => {
-    //             setUsersList(response.data);
-    //         })
-    // }, []);
 
     const registerUser = () => {
         Axios.post('http://localhost:3001/api/register', {

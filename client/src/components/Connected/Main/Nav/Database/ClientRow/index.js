@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import '../../../../../../style/components/connected/main/options/_clientrow.sass';
 
-const ClientRow = ({client, setSelectedClient}) => {
+const ClientRow = ({client, setSelectedClient, changeComponent}) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseOver = () => {
@@ -11,8 +12,9 @@ const ClientRow = ({client, setSelectedClient}) => {
         setIsHovered(false);
     }
 
-    const clickClient = (event, client) => {
+    const handleOptionClick = (event, client, component) => {
         setSelectedClient(client);
+        changeComponent(component, client);
     }
 
     return (
@@ -22,15 +24,20 @@ const ClientRow = ({client, setSelectedClient}) => {
             onMouseLeave={handleMouseOut}
         >
             <td>{client.name}</td>
-            {isHovered &&
+            <td>
+                <div className={isHovered ? 'is-hovered' : 'not-hovered'}>
+                    <button onClick={(event) => handleOptionClick(event, client, 'first_evaluation')}>1st evaluation</button>
+                    <button onClick={(event) => handleOptionClick(event, client, 'second_evaluation')}>2nd evaluation</button>
+                    <button onClick={(event) => handleOptionClick(event, client, 'prescription')}>Prescription</button>
+                </div>
+            </td>
+            {/* {isHovered &&
                 <td>
                     <div>
-                        <button onClick={(event) => clickClient(event, client)}>1st evaluation</button>
-                        <button onClick={(event) => clickClient(event, client)}>2nd evaluation</button>
-                        <button onClick={(event) => clickClient(event, client)}>Prescription</button>
+                        
                     </div>
                </td>
-            }
+            } */}
         </tr>
     );
 };

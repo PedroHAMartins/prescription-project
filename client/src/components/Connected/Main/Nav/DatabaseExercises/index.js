@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
+import { config } from '../../../../../utils/getToken';
 import '../../../../../style/components/connected/main/options/_databaseexercises.sass';
+
 
 const DatabaseExercises = () => {
     const [exerciseName, setExerciseName] = useState('');
     const [type, setType] = useState('');
     const [exerciseList, setExerciseList] = useState([]);
 
-    const token = localStorage.getItem('token');
-    const config = {
-        headers: {
-            Authorization: token
-        }
-    };
 
     const insertExercise = () => {
         Axios.post('http://localhost:3001/api/exercise/register', {
