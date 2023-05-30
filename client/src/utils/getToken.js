@@ -1,8 +1,10 @@
-const token = localStorage.getItem('token');
-const config = {
-    headers: {
-        Authorization: token
-    }
-}
+const getToken = () => {
+    const token = localStorage.getItem('token');
+    return {
+        headers: {
+            Authorization: token
+        }
+    };
+};
 
-export { token, config };
+export default getToken;

@@ -114,6 +114,115 @@ app.post('/api/client/register',  async(req, res) => {
     })
 })
 
+app.put('/api/client/update/:id', verifyAuth, (req, res) => {
+    const idClient = req.params.id;
+    const { name, gender, age, phone, address, birthdate, email, info_height, info_weight, info_allergies, info_patologies, info_objectives } = req.body;
+    const updateFields = [];
+    const updateValues = [];
+
+    if(name) {
+        updateFields.push('name = ?');
+        updateValues.push(name);
+    }
+    if(gender) {
+        updateFields.push('gender = ?');
+        updateValues.push(gender);
+    }
+
+    if(age) {
+        updateFields.push('age = ?');
+        updateValues.push(age);
+    }
+
+    if(phone) {
+        updateFields.push('phone = ?');
+        updateValues.push(phone);
+    }
+
+    if(address) {
+        updateFields.push('address = ?');
+        updateValues.push(address);
+    }
+
+    if(birthdate) {
+        updateFields.push('birthdate = ?');
+        updateValues.push(birthdate);
+    }
+
+    if(email) {
+        updateFields.push('email = ?');
+        updateValues.push(email);
+    }
+    if(updateFields.length === 0) {
+        return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const sqlUpdate = `UPDATE client SET ${updateFields.join(', ')} WHERE id_client = ?`;
+    updateValues.push(idClient);
+
+    db.query(sqlUpdate, updateValues, (err, result) => {
+        if(err){
+            console.log(err);
+            return res.status(500).json({ error: 'Error while updating client' });
+        }
+
+        const updateFirstEvaluationFields = [];
+        const updateFirstEvaluationValues = [];
+
+        if(info_height) {
+            updateFirstEvaluationFields.push('info_height = ?');
+            updateFirstEvaluationValues.push(info_height);
+        }
+
+        if(info_weight) {
+            updateFirstEvaluationFields.push('info_weight = ?');
+            updateFirstEvaluationValues.push(info_weight);
+        }
+
+        if(info_allergies) {
+            updateFirstEvaluationFields.push('info_allergies = ?');
+            updateFirstEvaluationValues.push(info_allergies);
+        }
+
+        if(info_patologies) {
+            updateFirstEvaluationFields.push('info_patologies = ?');
+            updateFirstEvaluationValues.push(info_patologies);
+        }
+
+        if(info_objectives) {
+            updateFirstEvaluationFields.push('info_objectives = ?');
+            updateFirstEvaluationValues.push(info_objectives);
+        }
+
+        if (updateFirstEvaluationFields.length === 0) {
+            return res.status(200).json({ message: 'No fields to update' });
+        }
+        else {
+            const sqlUpdateFirstEvaluation = `UPDATE first_evaluation SET ${updateFirstEvaluationFields.join(', ')} WHERE id_client_fk = ?`;
+            updateFirstEvaluationValues.push(idClient);
+            db.query(sqlUpdateFirstEvaluation, updateFirstEvaluationValues, (err, result) => {
+                if(err){
+                    console.log(err);
+                    return res.status(500).json({ error: 'Error while updating first evaluation' });
+                }
+                console.log(result);
+                res.status(200).json({message: 'Client successfully updated'});
+            })
+        }
+    })
+})
+
+app.get('/api/client/first-evaluation/:id', verifyAuth, (req, res) => {
+    const idClient = req.params.id;
+    const sqlSelect = `SELECT * FROM first_evaluation WHERE id_client_fk = ?`;
+    db.query(sqlSelect, [idClient], (err, result) => {
+        if(err){
+            return res.status(500).json({ error: 'Error while fetching first evaluation' });
+        }
+        res.status(200).json(result);
+    })
+})
+
 app.post('/api/login', async(req, res) => {
     const { username, password } = req.body;
     const sqlSelect = `SELECT * FROM user WHERE username = ?`;
@@ -169,7 +278,10 @@ app.get('/api/client/search', verifyAuth, (req, res) => {
     const {query} = req.query;
     const userId = req.id_user;
 
-    const sqlSelect = `SELECT * FROM client WHERE name LIKE ? AND id_user_fk = ?`;
+    const sqlSelect = `SELECT client.*, first_evaluation.*
+    FROM client
+    LEFT JOIN first_evaluation ON client.id_client = first_evaluation.id_client_fk
+    WHERE client.name LIKE ? AND client.id_user_fk = ?`;
 
     db.query(sqlSelect, [`%${query}%`, userId], (err, result) => {
         if(err) {
@@ -179,7 +291,7 @@ app.get('/api/client/search', verifyAuth, (req, res) => {
         if(result.length === 0) {
             return res.status(404).json({ error: 'No clients found' });
         }
-
+        console.log(result);
         res.status(200).json(result);
     })
 })

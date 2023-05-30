@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
-import { config } from '../../../../../utils/getToken';
+import getToken from '../../../../../utils/getToken';
 import '../../../../../style/components/connected/main/options/_databaseexercises.sass';
 
 
@@ -11,6 +11,9 @@ const DatabaseExercises = () => {
 
 
     const insertExercise = () => {
+
+        const config = getToken();
+
         Axios.post('http://localhost:3001/api/exercise/register', {
             name: exerciseName,
             type: type
@@ -29,6 +32,9 @@ const DatabaseExercises = () => {
     }
 
     const loadExercises = () => {
+
+        const config = getToken();
+
         Axios.get('http://localhost:3001/api/exercise/list', config)
         .then((response) => {
             setExerciseList(response.data);

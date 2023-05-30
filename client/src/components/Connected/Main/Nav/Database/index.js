@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import ClientRow from './ClientRow';
 import '../../../../../style/components/connected/main/options/_database.sass'
-import { token, config } from '../../../../../utils/getToken';
+import getToken from '../../../../../utils/getToken';
 
 const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
     const [clientName, setClientName] = useState('');
@@ -13,6 +13,9 @@ const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const insertClient = () => {
+
+        const config = getToken();
+
         Axios.post('http://localhost:3001/api/client/register', {
             name: clientName,
             gender: gender
@@ -31,14 +34,14 @@ const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
         })
     }
     const searchClient = () => {
+
+        const config = getToken();
         
         Axios.get('http://localhost:3001/api/client/search', {
             params: {
                 query: searchQuery
             },
-            headers: {
-                Authorization: token
-            }
+            ...config
         }).then((response) => {
             setClientList(response.data);
         }).catch((error) => {
@@ -59,7 +62,7 @@ const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
         }, 100);
 
         return () => clearTimeout(delay);
-    })
+    }, []);
 
     return (
         <section className='section__database__clients'>
@@ -79,7 +82,7 @@ const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
                                 value="Male" 
                                 checked={gender === 'Male'} 
                                 onChange={(event) => setGender(event.target.value)}/>
-                        <label htmlFor="male">Male</label>
+                        <label htmlFor="Male">Male</label>
                     </div>
 
                     <div>
@@ -89,7 +92,7 @@ const Database = ( {selectedClient, setSelectedClient, changeComponent}) => {
                                 value="Female" 
                                 checked={gender === 'Female'} 
                                 onChange={(event) => setGender(event.target.value)}/>
-                        <label htmlFor="female">Female</label>
+                        <label htmlFor="Female">Female</label>
                     </div>
                 </div>
 
