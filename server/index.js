@@ -772,7 +772,36 @@ app.get('/api/exercise/list', verifyAuth, (req, res) => {
         }
         res.status(200).json(result);
     })
+})
 
+app.put('/api/prescription/type/:id', verifyAuth, (req, res) => {
+    const idClient = req.params.id;
+    const type = req.body.type;
+
+    const sqlUpdate = `UPDATE prescription SET training_type = ? WHERE id_client_fk = ?`;
+    db.query(sqlUpdate, [type, idClient], (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.status(500).json({ error: 'Error while updating client' });
+        }
+        console.log(result);
+        res.status(200).json({message: 'Client successfully updated'});
+    })
+})
+
+app.get('/api/prescription/:id', verifyAuth, (req, res) => {
+    const idClient = req.params.id;
+    const sqlSelect = `SELECT * FROM prescription WHERE id_client_fk = ?`;
+
+    db.query(sqlSelect, [idClient], (err, result) => {
+        if(err) {
+            return res.status(500).json({ error: 'Error while fetching prescription' });
+        }
+        if(result.length === 0) {
+            return res.status(404).json({ error: 'No prescriptions found' });
+        }
+        res.status(200).json(result);
+    })
 })
 
 
