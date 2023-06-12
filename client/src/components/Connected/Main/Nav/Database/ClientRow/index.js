@@ -15,6 +15,7 @@ const ClientRow = ({client, setSelectedClient, changeComponent}) => {
     const handleOptionClick = (event, client, component) => {
         setSelectedClient(client);
         changeComponent(component, client);
+        console.log(client);
     }
 
     return (

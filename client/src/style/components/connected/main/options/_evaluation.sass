@@ -1,21 +1,80 @@
 @use '../../../../abstract/_variables'
 
 section
-    display: flex
-    flex-flow: column wrap
-    gap: 10px
-    .div__personal-info
-        display: flex
-        flex-direction: column
-        justify-content: space-between
-        border: 2px solid variables.$color-quaternary
-        border-radius: 10px
-        padding: 10px
 
-    .div__first-evaluation__info
+    .div__first-evaluation
+        height: 100%
         display: flex
+        width: 100%
         flex-direction: column
-        justify-content: space-between
-        border: 2px solid variables.$color-quaternary
-        border-radius: 10px
-        padding: 10px
+
+        .evaluation__button
+            background-color: variables.$color-quaternary
+            color: variables.$color-primary
+            padding: 10px
+            border-radius: 10px
+            border: none
+            font-family: variables.$font-primary
+            font-weight: 700
+            font-size: 1.5em
+            margin: 10px 25%
+            width: 50%
+
+            &:hover
+                cursor: pointer
+                background-color: variables.$color-quaternay-dark
+
+
+        .div__first-evaluation__title
+            font-size: 1.5em
+            font-weight: 700
+            color: variables.$color-quaternary
+            text-align: center
+            margin: 1em 0
+
+        .div__first-evaluation__body
+            height: 100dvh
+            overflow-y: auto
+
+
+            .div__first-evaluation__sector
+
+                .div__evaluation__box
+                    margin: 1em
+                    display: flex
+                    flex-flow: row wrap
+                    border: 1px solid variables.$color-quaternary
+                    padding: 1em
+                    border-radius: 10px
+                    box-shadow: 2px 2px 2px variables.$color-grey
+
+                    .div__evaluation__box__item
+                        border: 1px solid variables.$color-quaternary
+                        border-radius: 10px
+                        margin: 1em
+                        padding: 0.5em
+                        box-shadow: 2px 2px 2px variables.$color-grey             
+
+                    .div__gender
+                        display: flex
+                        width: 20%
+                        border: 1px solid variables.$color-quaternary
+                        border-radius: 10px
+
+                        .div__gender__radio
+                            display: flex
+                            flex-direction: column
+
+                            .div__gender__radio__item
+                                display: flex
+                                flex-direction: row
+
+                    label,input
+                        font: variables.$font-primary
+                        margin: 0.25em
+
+                    input
+                        border: none
+                        font-size: 1em
+                        font-family: variables.$font-primary
+                        font-weight: 500
