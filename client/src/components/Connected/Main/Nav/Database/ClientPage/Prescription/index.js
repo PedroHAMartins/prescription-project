@@ -7,14 +7,13 @@ import Axios from 'axios';
 
 const Prescription = ( {client} ) => {
 
-    const [exerciseList, setExerciseList] = useState([]);
     const [exerciseType, setExerciseType] = useState('');
     const [selectedTypeComponent, setSelectedTypeComponent] = useState(null);
 
     const renderSelectedTypeComponent = () => {
         return selectedTypeComponent || (
             <div>
-                <p>No training type selected</p>
+                <TypeA client={client}/>;
             </div>
         );
     };
@@ -42,7 +41,7 @@ const Prescription = ( {client} ) => {
                     setSelectedTypeComponent(<TypeABCDE client={client}/>);
                     break;
                 default:
-                    setSelectedTypeComponent(<div>No training type selected</div>);
+                    setSelectedTypeComponent(<TypeA client={client}/>);
                     break;
             }
         })
@@ -52,50 +51,6 @@ const Prescription = ( {client} ) => {
             }
         });
     });
-
-    const getExercises = () => {
-
-        const config = getToken();
-
-        Axios.get('http://localhost:3001/api/exercise/list', config)
-        .then((response) => {
-            setExerciseList(response.data);
-        }).catch((error) => {
-            if(error.response.status === 404) {
-                setExerciseList([]);
-            }
-            console.log(error);
-        })
-    }
-
-    useEffect(() => {
-        const delay = setTimeout(() => {
-            getExercises();
-        }, 100);
-
-        return () => clearTimeout(delay);
-    }, []);
-
-    const renderExerciseOption = () => {
-        const exerciseGroups = exerciseList.reduce((groups, exercise) => {
-          const { type } = exercise;
-          if (!groups[type]) {
-            groups[type] = [];
-          }
-          groups[type].push(exercise);
-          return groups;
-        }, {});
-
-        return Object.entries(exerciseGroups).map(([type, exercises]) => (
-            <select key={type}>
-              {exercises.map((exercise) => (
-                <option key={exercise.id} value={exercise.id}>
-                  {exercise.name}
-                </option>
-              ))}
-            </select>
-          ));
-        };
 
     const selectedType = (event) => {
         setExerciseType(event.target.value)
@@ -130,29 +85,32 @@ const Prescription = ( {client} ) => {
             <h1>Prescription</h1>
             <div>
                 <p>{client.name}</p>
-                <div className='div__prescription__exercise-type'>
-                    <div>
-                        <label htmlFor="a">A</label>
-                        <input type="radio" name="exerciseType" id="a" value="a" onClick={selectedType} defaultChecked={exerciseType === 'a'}/>
-                    </div>
-                    <div>
-                        <label htmlFor="ab">AB</label>
-                        <input type="radio" name="exerciseType" id="ab" value="ab" onClick={selectedType} defaultChecked={exerciseType === 'ab'}/>
-                    </div>
-                    <div>
-                        <label htmlFor="abc">ABC</label>
-                        <input type="radio" name="exerciseType" id="abc" value="abc" onClick={selectedType} defaultChecked={exerciseType === 'abc'}/>
-                    </div>
-                    <div>
-                        <label htmlFor="abcd">ABCD</label>
-                        <input type="radio" name="exerciseType" id="abcd" value="abcd" onClick={selectedType} defaultChecked={exerciseType === 'abcd'}/>
-                    </div>
-                    <div>
-                        <label htmlFor="abcde">ABCDE</label>
-                        <input type="radio" name="exerciseType" id="abcde" value="abcde" onClick={selectedType} defaultChecked={exerciseType === 'abcde'}/>
+                {/* <div className='div__prescription__exercise-type'>
+                    <h2>Select exercise routine type</h2>
+                    <div className='div__prescription__exercise-type__group'>
+                        <div className='div__prescription__exercise-type__group__inside'>
+                            <label htmlFor="a">A</label>
+                            <input type="radio" name="exerciseType" id="a" value="a" onClick={selectedType} defaultChecked={exerciseType === 'a'}/>
+                        </div>
+                        <div className='div__prescription__exercise-type__group__inside'>
+                            <label htmlFor="ab">AB</label>
+                            <input type="radio" name="exerciseType" id="ab" value="ab" onClick={selectedType} defaultChecked={exerciseType === 'ab'}/>
+                        </div>
+                        <div className='div__prescription__exercise-type__group__inside'>
+                            <label htmlFor="abc">ABC</label>
+                            <input type="radio" name="exerciseType" id="abc" value="abc" onClick={selectedType} defaultChecked={exerciseType === 'abc'}/>
+                        </div>
+                        <div className='div__prescription__exercise-type__group__inside'>
+                            <label htmlFor="abcd">ABCD</label>
+                            <input type="radio" name="exerciseType" id="abcd" value="abcd" onClick={selectedType} defaultChecked={exerciseType === 'abcd'}/>
+                        </div>
+                        <div className='div__prescription__exercise-type__group__inside'>
+                            <label htmlFor="abcde">ABCDE</label>
+                            <input type="radio" name="exerciseType" id="abcde" value="abcde" onClick={selectedType} defaultChecked={exerciseType === 'abcde'}/>
+                        </div>
                     </div>
                 <button onClick={setType}>Save type</button>
-                </div>
+                </div> */}
                 <div className='div__prescription__exercises'>
                     {renderSelectedTypeComponent()}
                 </div>

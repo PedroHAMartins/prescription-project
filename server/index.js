@@ -776,34 +776,450 @@ app.get('/api/exercise/list', verifyAuth, (req, res) => {
 
 app.put('/api/prescription/type/:id', verifyAuth, (req, res) => {
     const idClient = req.params.id;
-    const type = req.body.type;
+    const exerciseData = req.body;
 
-    const sqlUpdate = `UPDATE prescription SET training_type = ? WHERE id_client_fk = ?`;
-    db.query(sqlUpdate, [type, idClient], (err, result) => {
+    const updateQueries = Object.keys(exerciseData).map((key) => {
+        return new Promise((resolve, reject) => {
+            const index = key.split('_')[1];
+            const column = key.startsWith('exercise_') ? 'exercise_' + index : key.startsWith('sets_') ? 'sets_' + index : 'reps_' + index;
+            const value = exerciseData[key];
+
+            const sqlUpdate = `UPDATE prescription SET ${column} = ? WHERE id_client_fk = ?`;
+            db.query(sqlUpdate, [value, idClient], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    console.log(result);
+                    resolve(result);
+                }
+            });
+        });
+    });
+
+    Promise.all(updateQueries)
+        .then(() => {
+            res.status(200).json({ message: 'Prescription successfully updated' });
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).json({ error: 'Error while updating prescription' });
+        });
+});
+
+
+app.put('/api/prescription/add', verifyAuth, (req, res) => {
+    const idClient = req.query.client;
+    const exerciseData = req.body;
+
+    const updateQueries = Object.keys(exerciseData).map((key) => {
+        const column = key.startsWith('exercise_') ? 'exercise_name' : key.startsWith('reps_') ? 'reps' : 'sets';
+        const index = key.split('_')[1];
+        return db.promise().execute(`UPDATE prescription SET ${column} = ? WHERE id_client_fk = ? AND exercise_${index} = ?`, [exerciseData[key], idClient, exerciseData[`exercise_${index}`]]);
+    });
+
+    Promise.all(updateQueries)
+        .then(() => {
+            res.status(200).json({ message: 'Prescription updated successfully' });
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).json({ error: 'Error while updating prescription' });
+        });
+});
+
+app.put('/api/prescription/type/a/add', verifyAuth, (req, res) => {
+    const { exercise_1,
+            exercise_2,
+            exercise_3, 
+            exercise_4,
+            exercise_5,
+            exercise_6,
+            exercise_7,
+            exercise_8,
+            exercise_9,
+            exercise_10,
+            exercise_11,
+            exercise_12,
+            exercise_13,
+            exercise_14,
+            exercise_15,
+            exercise_16,
+            exercise_17,
+            exercise_18,
+            exercise_19,
+            exercise_20} = req.body;
+
+    const prescriptionId = req.params.id;
+
+    console.log(exercise_1, exercise_2, exercise_3, exercise_4, exercise_5, exercise_6, exercise_7, exercise_8, exercise_9, exercise_10,
+    exercise_11, exercise_12, exercise_13, exercise_14, exercise_15, exercise_16, exercise_17, exercise_18, exercise_19, exercise_20);
+
+    console.log(prescriptionId);
+    
+    const sqlInsert = `INSERT INTO prescription (exercise_1, exercise_2, exercise_3, exercise_4, exercise_5, exercise_6, exercise_7, exercise_8, exercise_9, exercise_10,
+    exercise_11, exercise_12, exercise_13, exercise_14, exercise_15, exercise_16, exercise_17, exercise_18, exercise_19, exercise_20) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    WHERE id_prescription_fk = ?`;
+
+    db.query(sqlInsert, [exercise_1, exercise_2, exercise_3, exercise_4, exercise_5, exercise_6, exercise_7, exercise_8, exercise_9, exercise_10,
+    exercise_11, exercise_12, exercise_13, exercise_14, exercise_15, exercise_16, exercise_17, exercise_18, exercise_19, exercise_20, prescriptionId], (err, result) => {
         if(err) {
             console.log(err);
-            return res.status(500).json({ error: 'Error while updating client' });
+            return res.status(500).json({ error: 'Error while inserting type A' });
         }
         console.log(result);
-        res.status(200).json({message: 'Client successfully updated'});
-    })
+        res.status(200).json({message: 'Type A successfully added'});
+    }
+    )
 })
 
-app.get('/api/prescription/:id', verifyAuth, (req, res) => {
+app.get('/api/client/prescription/:id', verifyAuth, (req, res) => {
     const idClient = req.params.id;
     const sqlSelect = `SELECT * FROM prescription WHERE id_client_fk = ?`;
 
     db.query(sqlSelect, [idClient], (err, result) => {
         if(err) {
+            console.error('Error fetching prescription:', err);
+            console.log(err);
             return res.status(500).json({ error: 'Error while fetching prescription' });
         }
-        if(result.length === 0) {
-            return res.status(404).json({ error: 'No prescriptions found' });
-        }
         res.status(200).json(result);
+        console.log(result);
+    });
+});
+
+app.put('/api/client/prescription/update/:id', verifyAuth, (req, res) => {
+    const idClient = req.params.id;
+    console.log("Request Body:", req.body);
+    const { 
+        exercise_1, 
+        exercise_2, 
+        exercise_3, 
+        exercise_4, 
+        exercise_5, 
+        exercise_6, 
+        exercise_7,
+        exercise_8,
+        exercise_9,
+        exercise_10,
+        exercise_11,
+        exercise_12,
+        exercise_13,
+        exercise_14,
+        exercise_15,
+        exercise_16, 
+        exercise_17,
+        exercise_18,
+        exercise_19,
+        exercise_20,
+
+        reps_1,
+        reps_2,
+        reps_3,
+        reps_4,
+        reps_5,
+        reps_6,
+        reps_7,
+        reps_8,
+        reps_9,
+        reps_10,
+        reps_11,
+        reps_12,
+        reps_13,
+        reps_14,
+        reps_15,
+        reps_16,
+        reps_17,
+        reps_18,
+        reps_19,
+        reps_20,
+
+        sets_1,
+        sets_2,
+        sets_3,
+        sets_4, 
+        sets_5,
+        sets_6,
+        sets_7,
+        sets_8,
+        sets_9,
+        sets_10,
+        sets_11,
+        sets_12,
+        sets_13,
+        sets_14,
+        sets_15,
+        sets_16,
+        sets_17,
+        sets_18,
+        sets_19,
+        sets_20      
+        } = req.body;
+
+    console.log(req.body);
+    const updateFieldsPrescription = [];
+    const updateValuesPrescription = [];
+
+    if(exercise_1) {
+        updateFieldsPrescription.push('exercise_1 = ?');
+        updateValuesPrescription.push(exercise_1);
+    }
+    if(exercise_2) {
+        updateFieldsPrescription.push('exercise_2 = ?');
+        updateValuesPrescription.push(exercise_2);
+    }
+    if(exercise_3) {
+        updateFieldsPrescription.push('exercise_3 = ?');
+        updateValuesPrescription.push(exercise_3);
+    }
+    if(exercise_4) {
+        updateFieldsPrescription.push('exercise_4 = ?');
+        updateValuesPrescription.push(exercise_4);
+    }
+    if(exercise_5) {
+        updateFieldsPrescription.push('exercise_5 = ?');
+        updateValuesPrescription.push(exercise_5);
+    }
+    if(exercise_6) {
+        updateFieldsPrescription.push('exercise_6 = ?');
+        updateValuesPrescription.push(exercise_6);
+    }
+    if(exercise_7) {
+        updateFieldsPrescription.push('exercise_7 = ?');
+        updateValuesPrescription.push(exercise_7);
+    }
+    if(exercise_8) {
+        updateFieldsPrescription.push('exercise_8 = ?');
+        updateValuesPrescription.push(exercise_8);
+    }
+    if(exercise_9) {
+        updateFieldsPrescription.push('exercise_9 = ?');
+        updateValuesPrescription.push(exercise_9);
+    }
+    if(exercise_10) {
+        updateFieldsPrescription.push('exercise_10 = ?');
+        updateValuesPrescription.push(exercise_10);
+    }
+    if(exercise_11) {
+        updateFieldsPrescription.push('exercise_11 = ?');
+        updateValuesPrescription.push(exercise_11);
+    }
+    if(exercise_12) {
+        updateFieldsPrescription.push('exercise_12 = ?');
+        updateValuesPrescription.push(exercise_12);
+    }
+    if(exercise_13) {
+        updateFieldsPrescription.push('exercise_13 = ?');
+        updateValuesPrescription.push(exercise_13);
+    }
+    if(exercise_14) {
+        updateFieldsPrescription.push('exercise_14 = ?');
+        updateValuesPrescription.push(exercise_14);
+    }
+    if(exercise_15) {
+        updateFieldsPrescription.push('exercise_15 = ?');
+        updateValuesPrescription.push(exercise_15);
+    }
+    if(exercise_16) {
+        updateFieldsPrescription.push('exercise_16 = ?');
+        updateValuesPrescription.push(exercise_16);
+    }
+    if(exercise_17) {
+        updateFieldsPrescription.push('exercise_17 = ?');
+        updateValuesPrescription.push(exercise_17);
+    }
+    if(exercise_18) {
+        updateFieldsPrescription.push('exercise_18 = ?');
+        updateValuesPrescription.push(exercise_18);
+    }
+    if(exercise_19) {
+        updateFieldsPrescription.push('exercise_19 = ?');
+        updateValuesPrescription.push(exercise_19);
+    }
+    if(exercise_20) {
+        updateFieldsPrescription.push('exercise_20 = ?');
+        updateValuesPrescription.push(exercise_20);
+    }
+    if(sets_1) {
+        updateFieldsPrescription.push('sets_1 = ?');
+        updateValuesPrescription.push(sets_1);
+    }
+    if(sets_2) {
+        updateFieldsPrescription.push('sets_2 = ?');
+        updateValuesPrescription.push(sets_2);
+    }
+    if(sets_3) {
+        updateFieldsPrescription.push('sets_3 = ?');
+        updateValuesPrescription.push(sets_3);
+    }
+    if(sets_4) {
+        updateFieldsPrescription.push('sets_4 = ?');
+        updateValuesPrescription.push(sets_4);
+    }
+    if(sets_5) {
+        updateFieldsPrescription.push('sets_5 = ?');
+        updateValuesPrescription.push(sets_5);
+    }
+    if(sets_6) {
+        updateFieldsPrescription.push('sets_6 = ?');
+        updateValuesPrescription.push(sets_6);
+    }
+    if(sets_7) {
+        updateFieldsPrescription.push('sets_7 = ?');
+        updateValuesPrescription.push(sets_7);
+    }
+    if(sets_8) {
+        updateFieldsPrescription.push('sets_8 = ?');
+        updateValuesPrescription.push(sets_8);
+    }
+    if(sets_9) {
+        updateFieldsPrescription.push('sets_9 = ?');
+        updateValuesPrescription.push(sets_9);
+    }
+    if(sets_10) {
+        updateFieldsPrescription.push('sets_10 = ?');
+        updateValuesPrescription.push(sets_10);
+    }
+    if(sets_11) {
+        updateFieldsPrescription.push('sets_11 = ?');
+        updateValuesPrescription.push(sets_11);
+    }
+    if(sets_12) {
+        updateFieldsPrescription.push('sets_12 = ?');
+        updateValuesPrescription.push(sets_12);
+    }
+    if(sets_13) {
+        updateFieldsPrescription.push('sets_13 = ?');
+        updateValuesPrescription.push(sets_13);
+    }
+    if(sets_14) {
+        updateFieldsPrescription.push('sets_14 = ?');
+        updateValuesPrescription.push(sets_14);
+    }
+    if(sets_15) {
+        updateFieldsPrescription.push('sets_15 = ?');
+        updateValuesPrescription.push(sets_15);
+    }
+    if(sets_16) {
+        updateFieldsPrescription.push('sets_16 = ?');
+        updateValuesPrescription.push(sets_16);
+    }
+    if(sets_17) {
+        updateFieldsPrescription.push('sets_17 = ?');
+        updateValuesPrescription.push(sets_17);
+    }
+    if(sets_18) {
+        updateFieldsPrescription.push('sets_18 = ?');
+        updateValuesPrescription.push(sets_18);
+    }
+    if(sets_19) {
+        updateFieldsPrescription.push('sets_19 = ?');
+        updateValuesPrescription.push(sets_19);
+    }
+    if(sets_20) {
+        updateFieldsPrescription.push('sets_20 = ?');
+        updateValuesPrescription.push(sets_20);
+    }
+    if(reps_1) {
+        updateFieldsPrescription.push('reps_1 = ?');
+        updateValuesPrescription.push(reps_1);
+    }
+    if(reps_2) {
+        updateFieldsPrescription.push('reps_2 = ?');
+        updateValuesPrescription.push(reps_2);
+    }
+    if(reps_3) {
+        updateFieldsPrescription.push('reps_3 = ?');
+        updateValuesPrescription.push(reps_3);
+    }
+    if(reps_4) {
+        updateFieldsPrescription.push('reps_4 = ?');
+        updateValuesPrescription.push(reps_4);
+    }
+    if(reps_5) {
+        updateFieldsPrescription.push('reps_5 = ?');
+        updateValuesPrescription.push(reps_5);
+    }
+    if(reps_6) {
+        updateFieldsPrescription.push('reps_6 = ?');
+        updateValuesPrescription.push(reps_6);
+    }
+    if(reps_7) {
+        updateFieldsPrescription.push('reps_7 = ?');
+        updateValuesPrescription.push(reps_7);
+    }
+    if(reps_8) {
+        updateFieldsPrescription.push('reps_8 = ?');
+        updateValuesPrescription.push(reps_8);
+    }
+    if(reps_9) {
+        updateFieldsPrescription.push('reps_9 = ?');
+        updateValuesPrescription.push(reps_9);
+    }
+    if(reps_10) {
+        updateFieldsPrescription.push('reps_10 = ?');
+        updateValuesPrescription.push(reps_10);
+    }
+    if(reps_11) {
+        updateFieldsPrescription.push('reps_11 = ?');
+        updateValuesPrescription.push(reps_11);
+    }
+    if(reps_12) {
+        updateFieldsPrescription.push('reps_12 = ?');
+        updateValuesPrescription.push(reps_12);
+    }
+    if(reps_13) {
+        updateFieldsPrescription.push('reps_13 = ?');
+        updateValuesPrescription.push(reps_13);
+    }
+    if(reps_14) {
+        updateFieldsPrescription.push('reps_14 = ?');
+        updateValuesPrescription.push(reps_14);
+    }
+    if(reps_15) {
+        updateFieldsPrescription.push('reps_15 = ?');
+        updateValuesPrescription.push(reps_15);
+    }
+    if(reps_16) {
+        updateFieldsPrescription.push('reps_16 = ?');
+        updateValuesPrescription.push(reps_16);
+    }
+    if(reps_17) {
+        updateFieldsPrescription.push('reps_17 = ?');
+        updateValuesPrescription.push(reps_17);
+    }
+    if(reps_18) {
+        updateFieldsPrescription.push('reps_18 = ?');
+        updateValuesPrescription.push(reps_18);
+    }
+    if(reps_19) {
+        updateFieldsPrescription.push('reps_19 = ?');
+        updateValuesPrescription.push(reps_19);
+    }
+    if(reps_20) {
+        updateFieldsPrescription.push('reps_20 = ?');
+        updateValuesPrescription.push(reps_20);
+    }
+    if(updateFieldsPrescription.length === 0) {
+        return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const sqlUpdate = `UPDATE prescription SET ${updateFieldsPrescription.join(', ')} WHERE id_client_fk = ?`;
+    updateValuesPrescription.push(idClient);
+
+    db.query(sqlUpdate, updateValuesPrescription, (err, result) => {
+        if(err){
+            console.log(err);
+            console.log(result);
+            return res.status(500).json({ error: 'Error while updating prescription' });
+        }
+        else{
+            console.log(err);
+            console.log(result);
+            return res.status(200).json({ success: 'Prescription updated successfully' });
+        }
     })
 })
-
 
 app.listen(3001, () => {
     console.log('Server is running on port 3001');
