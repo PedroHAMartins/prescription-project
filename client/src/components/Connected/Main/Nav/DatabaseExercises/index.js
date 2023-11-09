@@ -66,7 +66,7 @@ const DatabaseExercises = () => {
 
     return (
         <section className='section__database__exercises'>
-            <h1>Database Exercises</h1>
+            <h1 className='section__database__exercises__h1'>Database Exercises</h1>
             <div className="div__database__exercises__insert">
                 <h2>Register Exercise</h2>
                 <input  type="text" 

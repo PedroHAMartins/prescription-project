@@ -6,16 +6,18 @@ const RegisterPage = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
 
     const registerUser = () => {
         Axios.post('http://localhost:3001/api/register', {
             username: username, 
-            password: password
+            password: password,
+            email: email
         }).then(() => {
             alert('Successfully registered!');
         }).catch((error) => {
             if(error.response.status === 409) {
-                alert('User already exists');
+                alert('User or email already exists');
             }
         })
     }
@@ -23,16 +25,19 @@ const RegisterPage = () => {
     return (
         <section>
             <div className="register-box">
-                <h1>Register</h1>
-                <input type="text" name="" id="" onChange={(event) =>{
+                <h1 className='register-h1'>Register</h1>
+                <input type="text" name="" id="" className='register-input' placeholder='Username' onChange={(event) =>{
                     setUsername(event.target.value);
                 }}/>
-                <input type="password" name="" id="" onChange={(event) =>{
+                <input type="email" name="" id="" className='register-input' placeholder='E-mail' onChange={(event) =>{
+                    setEmail(event.target.value);
+                }}/>
+                <input type="password" name="" id="" className='register-input' placeholder='Password' onChange={(event) =>{
                     setPassword(event.target.value);
                 }}/>
-                <button onClick={registerUser}>Register</button>
+                <button onClick={registerUser} className='register-button'>Register</button>
+                <p className='register-p'>Already have an account? <a href="/" className='register-a'>Login!</a></p>
             </div>
-            <p>Already have an account? <a href="/">Login!</a></p>
         </section>
     )
 

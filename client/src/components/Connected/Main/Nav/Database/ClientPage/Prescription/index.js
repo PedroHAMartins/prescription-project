@@ -82,9 +82,9 @@ const Prescription = ( {client} ) => {
 
     return (
         <section>
-            <h1>Prescription</h1>
+            <h1 className='h1__prescription'>Prescription</h1>
             <div>
-                <p>{client.name}</p>
+                <p className='p__prescription'>{client.name}</p>
                 {/* <div className='div__prescription__exercise-type'>
                     <h2>Select exercise routine type</h2>
                     <div className='div__prescription__exercise-type__group'>

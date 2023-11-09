@@ -1,4 +1,5 @@
 @use '../../abstract/_base'
+@use '../../abstract/_variables'
 
 section
     background-color: white
@@ -9,11 +10,52 @@ section
     flex-direction: column
     align-items: center
     justify-content: center
-
+    
     .login-box
-        background-color: #0066FF
+        background-color: variables.$color-quaternary
+        border-radius: 25px
         padding: 5%
         display: flex
         flex-direction: column
         align-items: center
         justify-content: center
+        gap: 10px
+
+        .login-h1
+            color: variables.$color-white
+            margin-bottom: 10px
+            font-size: 1.5em
+            
+        .login-input
+            width: 250px
+            height: 40px
+            border-radius: 10px
+            outline: none
+            border: 0
+            font-size: 1.25em
+            text-align: center
+            font-family: variables.$font-primary
+            font-weight: 500
+
+            &:focus
+                outline: none
+
+        .login-button
+            width: 200px
+            height: 40px
+            margin-top: 20px
+            margin-bottom: 20px
+            background-color: variables.$color-secondary
+            border-radius: 10px
+            border: 0
+            font-family: variables.$font-primary
+            font-weight: 600
+            font-size: 1.2em
+            color: variables.$color-quaternary
+
+        .login-p
+            color: variables.$color-white
+            
+            .login-a
+                color: variables.$color-white
+

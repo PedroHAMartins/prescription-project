@@ -31,11 +31,12 @@ const verifyAuth = (req, res, next) => {
 app.post('/api/register',  async(req, res) => {
 
     const username = req.body.username;
+    const email = req.body.email;
     const password = await bcrypt.hash(req.body.password, 10);
 
-    const sqlSelect = `SELECT * FROM user WHERE username = ?`;
+    const sqlSelect = `SELECT * FROM user WHERE username = ? OR email = ?`;
 
-    db.query(sqlSelect, [username], async (err, result) => {
+    db.query(sqlSelect, [username, email], async (err, result) => {
         if(err) {
             return res.status(500).json({ error: 'Error while fetching user' });
         }
@@ -44,8 +45,8 @@ app.post('/api/register',  async(req, res) => {
             return res.status(409).json({ error: 'User already in database' });
         }
 
-        const sqlInsert = `INSERT INTO user (username, password) VALUES (?, ?)`;
-        db.query(sqlInsert, [username, password], (err, result) => {
+        const sqlInsert = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`;
+        db.query(sqlInsert, [username, email,password], (err, result) => {
             if(err) {
                 return res.status(500).json({ error: 'Error while inserting user' });
             }
@@ -53,6 +54,36 @@ app.post('/api/register',  async(req, res) => {
         })
     })
 })
+
+app.get('/api/user/info', verifyAuth, (req, res) => {
+    const token = req.headers.authorization;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.id_user;
+
+    const sqlSelect = 'SELECT username, email FROM user WHERE id_user = ?';
+    const sqlCountClients = 'SELECT COUNT(*) as totalClients FROM client WHERE id_user_fk = ?';
+
+    db.query(sqlSelect, [userId], (err, userResult) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error while fetching user information' });
+        }
+
+        if (userResult.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        db.query(sqlCountClients, [userId], (err, clientResult) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error while counting clients' });
+            }
+
+            const user = userResult[0];
+            const totalClients = clientResult[0].totalClients;
+
+            res.status(200).json({ username: user.username, email: user.email, totalClients });
+        });
+    });
+});
 
 app.post('/api/client/register',  async(req, res) => {
     const name = req.body.name;
@@ -695,6 +726,7 @@ app.get('/api/user', verifyAuth, (req, res) => {
         const user_info = {
             id_user: user.id_user,
             username: user.username,
+            email: user.email,
             password: user.password
         };
         

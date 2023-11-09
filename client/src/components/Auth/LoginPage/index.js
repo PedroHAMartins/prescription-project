@@ -31,15 +31,15 @@ const LoginPage = () => {
     return (
         <section>
             <div className="login-box">
-                <h1>Login</h1>
-                <input type="text" name="" id="" onChange={(event) => {
+                <h1 className='login-h1'>Login</h1>
+                <input type="text" name="" id="" className='login-input' placeholder='Username' onChange={(event) => {
                     setUsername(event.target.value);
                 }}/>
-                <input type="password" name="" id="" onChange={(event) =>{
+                <input type="password" name="" id="" className='login-input' placeholder='Password 'onChange={(event) =>{
                     setPassword(event.target.value);
                 }}/>
-                <button onClick={loginUser}>Submit</button>
-                <p>Don't have an account? <a href="/register">Register!</a></p>
+                <button onClick={loginUser} className='login-button'>Submit</button>
+                <p className='login-p'>Don't have an account? <a href="/register" className='login-a'>Register!</a></p>
             </div>
         </section>
     )
